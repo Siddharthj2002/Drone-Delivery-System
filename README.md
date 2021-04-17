@@ -16,8 +16,11 @@
 
   -> Show ability to write a generic class that implements a particular interface, fulfilling the
   contract it specifies (including Big O() behavior and an Iterable implementation).
+  
   -> Implementing proper use of exceptions.
+  
   -> Gain practice writing recursive methods and List ADT.
+  
   -> Gain practice writing appropriate unit tests.
   
   _________________________________
