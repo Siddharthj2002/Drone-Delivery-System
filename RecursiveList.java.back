@@ -1,0 +1,254 @@
+package app;
+
+import java.util.Iterator;
+
+public class RecursiveList<T> implements ListInterface<T> {
+
+  private int size;
+  private Node<T> head = null;
+  private Node<T> temp;
+  private Node<T> tempHeadPointer;
+  private Node<T> temp3;
+
+  public RecursiveList() {
+    this.head = null;
+    this.size = 0;
+  }
+
+  public RecursiveList(Node<T> first) {
+    this.head = first;
+    this.size = 1;
+  }
+
+  @Override
+  public int size() {
+    return this.size;
+  }
+
+  @Override
+  public void insertFirst(T elem) {
+    try {
+      if (elem == null) {
+        throw new NullPointerException();
+      }
+      Node<T> new_node = new Node<T>(elem, null);
+      new_node.setNext(head);
+      head = new_node;
+      this.size++;
+    } catch (Exception e) {
+    }
+
+  }
+
+  @Override
+  public void insertLast(T elem) {
+    Node<T> newNode = new Node<T>(elem, null);
+
+    if (elem == null) {
+      throw new NullPointerException();
+    }
+
+    if (head == null) {
+      head = newNode;
+      this.size++;
+      temp = head;
+      tempHeadPointer = head;
+      temp3 = head;
+
+    } else if (temp.getNext() == null) {
+      temp.setNext(newNode);
+      this.size++;
+    } else {
+      temp = temp.getNext();
+      insertLast(elem);
+    }
+  }
+
+  @Override
+  public void insertAt(int index, T elem) {
+    if (elem == null) {
+      throw new NullPointerException();
+    } else if (index == 0) {
+      insertFirst(elem);
+    } else if (index < 0 || index > this.size) {
+      throw new IndexOutOfBoundsException();
+    } else {
+      insertAtHelper(head, index, elem);
+    }
+    this.size++;
+  }
+
+  @Override
+  public T removeFirst() {
+    T removedItem = null;
+    if (size == 0) {
+      throw new IllegalStateException();
+    } else {
+      removedItem = head.getData();
+      head = head.getNext();
+    }
+    this.size--;
+    return removedItem;
+  }
+
+  @Override
+  public T removeLast() {
+    T removedItem = null;
+    if (this.size == 0) {
+      throw new IllegalStateException();
+    } else if (temp.getNext().getNext() == null) {
+      removedItem = temp.getData();
+      temp.setNext(null);
+      this.size++;
+    } else {
+      temp = temp.getNext();
+      removedItem = removeLast();
+    }
+    temp = head;
+    return removedItem;
+  }
+
+  @Override
+  public T removeAt(int i) {
+    T removedItem = null;
+    if (i < 0 || i >= size) {
+      throw new IndexOutOfBoundsException();
+    }
+    return removedItem;
+  }
+
+  @Override
+  public T getFirst() {
+    T item = null;
+    if (size == 0) {
+      throw new IllegalStateException();
+    } else {
+      item = head.getData();
+    }
+    return item;
+  }
+
+  @Override
+  public T getLast() {
+    T item = null;
+    if (size == 0) {
+      throw new IllegalStateException();
+    }
+    if (temp3.getNext() == null) {
+      item = temp3.getData();
+    } else {
+      temp3 = temp3.getNext();
+      item = getLast();
+    }
+    temp3 = head;
+    return item;
+  }
+
+  /**
+   * 
+   */
+  @Override
+  public T get(int i) {
+    T item = null;
+    tempHeadPointer = head;
+    item = getHelperMethod(i, tempHeadPointer);
+    return item;
+  }
+
+  @Override
+  public void remove(T elem) {
+    if (elem == null) {
+      throw new NullPointerException();
+    }
+    Node<T> tempNode = head, prevNode = null;
+    while (tempNode != null && tempNode.getData() != elem) {
+      prevNode = tempNode;
+      tempNode = tempNode.getNext();
+    }
+    if (tempNode == null) {
+      throw new ItemNotFoundException();
+    }
+    prevNode.setNext(tempNode.getNext());
+    this.size--;
+  }
+
+  @Override
+  public int indexOf(T elem) {
+    if (elem == null) {
+      throw new NullPointerException();
+    } else {
+      int index = 0;
+      boolean flag = false;
+      Node<T> currNode = head;
+      while (currNode != null) {
+        if (currNode.getData() == elem) {
+          flag = true;
+          break;
+        }
+        currNode = currNode.getNext();
+        index++;
+      }
+
+      if (flag == false) {
+        index = -1;
+      }
+      return index;
+    }
+  }
+
+  @Override
+  public boolean isEmpty() {
+    boolean empty = false;
+    if (head == null) {
+      empty = true;
+    }
+    return empty;
+  }
+
+  public Iterator<T> iterator() {
+    Iterator<T> iter = new Iterator<T>() {
+
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public T next() {
+        return null;
+      }
+    };
+    return iter;
+  }
+
+  public static <T> Node<T> insertAtHelper(Node<T> node, int i, T elem) {
+    if (node == null && i > 0) {
+      return node;
+    }
+    if (i == 0) {
+      Node<T> newNode = new Node<T>(elem, null);
+      newNode.setNext(node);
+      return newNode;
+    }
+    Node<T> nextNode = insertAtHelper(node.getNext(), i - 1, elem);
+    node.setNext(nextNode);
+    return node;
+  }
+
+  private T getHelperMethod(int i, Node<T> temphead) {
+    T item = null;
+    if (i < 0 || i >= this.size) {
+      throw new IndexOutOfBoundsException();
+    }
+
+    if (i == 0) {
+      item = temphead.getData();
+    }
+
+    else {
+      item = getHelperMethod(i - 1, temphead.getNext());
+    }
+    temphead = head;
+    return item;
+  }
+}
